@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd">
+
+    <!-- token, client等数据提供者 -->
+    <bean id="dataProvider" class="org.huke.oauth.cxf.security.server.TopsOauthDataProvider"/>
+
+    <!-- 授权服务 -->
+    <bean id="authorizeService" class="org.apache.cxf.rs.security.oauth2.services.AuthorizationCodeGrantService">
+        <property name="dataProvider" ref="dataProvider"/>
+    </bean>
+
+    <bean id="accessTokenService" class="org.apache.cxf.rs.security.oauth2.services.AccessTokenService">
+        <property name="dataProvider" ref="dataProvider"/>
+    </bean>
+
+    <bean id="authenticationFilter" class="org.huke.oauth.cxf.security.server.filter.AuthenticationFilter">
+        <property name="contextPathPattern">
+            <list value-type="java.lang.String">
+                <value>/</value>
+            </list>
+        </property>
+        <property name="loginPage" value="http://localhost:8082/login.html"/>
+        <property name="indexPage" value="http://localhost:8082/index.html"/>
+        <property name="action_login" value="/v5/user/login"/>
+        <property name="accountService" ref="accountService"/>
+    </bean>
+
+    <bean id="userService" class="org.huke.oauth.cxf.security.server.service.impl.UserServiceImpl"/>
+    <bean id="accountService" class="org.huke.oauth.cxf.security.server.service.impl.AccountServiceImpl"/>
+
+    <!-- oauth2.0服务, 主要为获取token, 无需登陆 -->
+    <jaxrs:server address="/oauth">
+        <jaxrs:serviceBeans>
+            <ref bean="accessTokenService"/>
+        </jaxrs:serviceBeans>
+        <jaxrs:providers>
+            <bean class="org.apache.cxf.rs.security.oauth2.provider.OAuthJSONProvider"/>
+        </jaxrs:providers>
+    </jaxrs:server>
+
+    <!-- 请求授权时, 需要验证用户是否登陆 -->
+    <jaxrs:server address="/user">
+        <jaxrs:serviceBeans>
+            <ref bean="authorizeService"/>
+            <ref bean="userService"/>
+        </jaxrs:serviceBeans>
+        <jaxrs:providers>
+            <ref bean="authenticationFilter"/>
+            <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider"/>
+        </jaxrs:providers>
+    </jaxrs:server>
+</beans>

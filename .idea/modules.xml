@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/authclient/authclient.iml" filepath="$PROJECT_DIR$/authclient/authclient.iml" />
+      <module fileurl="file://$PROJECT_DIR$/authserver/authserver.iml" filepath="$PROJECT_DIR$/authserver/authserver.iml" />
+      <module fileurl="file://$PROJECT_DIR$/cxfsecurityoauth2.iml" filepath="$PROJECT_DIR$/cxfsecurityoauth2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/resourceserver/resourceserver.iml" filepath="$PROJECT_DIR$/resourceserver/resourceserver.iml" />
+    </modules>
+  </component>
+</project>
